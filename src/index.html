@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bầu Cử Blockchain</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .navbar-custom {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .card-custom {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(4px);
+        background: rgba(255, 255, 255, 0.95);
+      }
+
+      .btn-custom {
+        border-radius: 10px;
+        padding: 10px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+      }
+
+      .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+      }
+
+      .login-form {
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .form-control-custom {
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        padding: 12px 15px;
+        font-size: 1rem;
+      }
+
+      .form-control-custom:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      }
+
+      .header-title {
+        color: white;
+        font-weight: 700;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        margin-bottom: 2rem;
+      }
+
+      .candidate-card {
+        border: none;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      .candidate-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(31, 38, 135, 0.2);
+      }
+
+      .badge-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 8px 15px;
+        border-radius: 20px;
+      }
+
+      .table-custom {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+      }
+
+      .table-custom tbody tr {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .account-info {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 15px 20px;
+        color: white;
+        margin-top: 2rem;
+      }
+
+      .loader {
+        display: none !important;
+        justify-content: center;
+        align-items: center;
+        min-height: 0;
+        pointer-events: none;
+        position: absolute;
+        z-index: -1;
+        visibility: hidden;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      #content {
+        position: relative;
+        z-index: 1;
+        pointer-events: auto;
+      }
+
+      #createElectionModal[style*="flex"] {
+        display: flex !important;
+      }
+
+      /* ========== CSS CHO KỲT QUẢ BẦU CỬ ========== */
+
+      .progress-bar.bg-gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      }
+
+      #electionResultsModal .table-hover tbody tr {
+        transition: all 0.3s ease;
+      }
+
+      #electionResultsModal .table-hover tbody tr:hover {
+        background-color: rgba(102, 126, 234, 0.1) !important;
+        transform: translateX(5px);
+      }
+
+      #electionResultsModal .badge {
+        font-size: 0.95rem;
+        padding: 6px 12px;
+      }
+
+      #electionResultsModal .alert {
+        border-radius: 10px;
+        border: none;
+      }
+
+      #electionResultsModal .alert-success {
+        background-color: rgba(40, 167, 69, 0.1);
+        border-left: 4px solid #28a745;
+      }
+
+      #electionResultsModal .alert-warning {
+        background-color: rgba(255, 193, 7, 0.1);
+        border-left: 4px solid #ffc107;
+      }
+
+      #electionResultsModal .alert-info {
+        background-color: rgba(23, 162, 184, 0.1);
+        border-left: 4px solid #17a2b8;
+      }
+
+      #electionResultsModal .table {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      #electionResultsModal .table-light {
+        background-color: rgba(102, 126, 234, 0.05) !important;
+      }
+
+      #electionResultsModal .table thead th {
+        color: #667eea;
+        font-weight: 600;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+      }
+
+      #electionResultsModal .progress {
+        background-color: rgba(102, 126, 234, 0.1);
+        border-radius: 5px;
+        overflow: hidden;
+      }
+
+      /* ========== CSS CHO NÚT LỌC ========== */
+
+      .filter-btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+      }
+
+      .filter-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .filter-btn-active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border: none !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      .filter-btn-active:hover {
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+      }
+
+      /* ========== HIỆU ỨNG DANH SÁCH ========== */
+
+      #electionsList {
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .election-card {
+        animation: slideInUp 0.4s ease-out;
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-custom">
+      <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1" style="color: white; font-weight: 700;">
+          <i class="bi bi-shield-check"></i> Hệ Thống Bầu Cử Blockchain
+        </span>
+        <div>
+          <button id="connectBtn" class="btn btn-primary-custom btn-custom" onclick="App.connectWallet()">
+            <i class="bi bi-wallet2"></i> Kết Nối Ví
+          </button>
+          <div id="navAccount" style="color: white; display: none; margin-left: 15px; display: flex; align-items: center; gap: 10px;">
+            <div>
+              <i class="bi bi-person-circle"></i> <span id="accountDisplay"></span>
+            </div>
+            <button class="btn btn-outline-light btn-sm" onclick="App.switchWallet()">
+              <i class="bi bi-arrow-repeat"></i> Đổi Ví
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div id="loginModal" style="display: flex ; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; align-items: center; justify-content: center;">
+      <div class="card card-custom" style="max-width: 500px;">
+        <div class="card-body p-5 text-center">
+          <h2 class="mb-4" style="color: #667eea; font-weight: 700;">
+            <i class="bi bi-wallet2" style="font-size: 3rem;"></i>
+          </h2>
+          <h3 class="mb-3">Kết Nối Ví Metamask</h3>
+          <p class="text-muted mb-4">Vui lòng kết nối ví Metamask của bạn để tiếp tục bỏ phiếu</p>
+          <button class="btn btn-primary-custom btn-custom w-100" onclick="App.connectWallet()">
+            <i class="bi bi-plug"></i> Kết Nối Ngay
+          </button>
+          <p class="text-muted small mt-3">Chưa có Metamask? <a href="https://metamask.io" target="_blank" style="color: #667eea;">Tải tại đây</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Tạo Cuộc Bầu Cử -->
+    <div id="createElectionModal" style="display: none !important; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; overflow-y: auto; align-items: center; justify-content: center;">
+      <div class="card card-custom" style="max-width: 1000px; width: 95%; margin: 20px auto;">
+        <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px 12px 0 0; padding: 20px;">
+          <h5 class="text-white mb-0">
+            <i class="bi bi-plus-circle"></i> Tạo Cuộc Bầu Cử Mới
+          </h5>
+        </div>
+        <div class="card-body p-4">
+          <form id="createElectionForm">
+            <!-- Hàng 1: Tên và Mô tả -->
+            <div class="row">
+              <!-- Tên cuộc bầu cử -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-600"><i class="bi bi-pencil"></i> Tên Cuộc Bầu Cử</label>
+                <input type="text" class="form-control form-control-custom" id="electionName" placeholder="VD: Bầu chủ tịch 2026" required>
+              </div>
+
+              <!-- Mô tả -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-600"><i class="bi bi-file-text"></i> Mô Tả</label>
+                <textarea class="form-control form-control-custom" id="electionDescription" rows="2" placeholder="Mô tả chi tiết cuộc bầu cử"></textarea>
+              </div>
+            </div>
+
+            <!-- Hàng 2: Ngày bắt đầu và kết thúc -->
+            <div class="row">
+              <!-- Ngày bắt đầu -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-600"><i class="bi bi-calendar-event"></i> Ngày Bắt Đầu</label>
+                <input type="datetime-local" class="form-control form-control-custom" id="startDate" required>
+              </div>
+
+              <!-- Ngày kết thúc -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-600"><i class="bi bi-calendar-check"></i> Ngày Kết Thúc</label>
+                <input type="datetime-local" class="form-control form-control-custom" id="endDate" required>
+              </div>
+            </div>
+
+            <!-- Hàng 3: Danh sách ứng cử viên (toàn chiều rộng) -->
+            <div class="row">
+              <div class="col-12 mb-3">
+                <label class="form-label fw-600"><i class="bi bi-people"></i> Ứng Cử Viên</label>
+                <div id="candidatesList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;"></div>
+                <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="App.addCandidateField()">
+                  <i class="bi bi-plus"></i> Thêm ứng cử viên
+                </button>
+              </div>
+            </div>
+
+            <!-- Hàng 4: Nút hành động -->
+            <div class="row mt-2">
+              <div class="col-12">
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary-custom btn-custom flex-grow-1">
+                    <i class="bi bi-check-circle"></i> Tạo Cuộc Bầu Cử
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-custom" onclick="App.closeCreateElectionModal()">
+                    <i class="bi bi-x-circle"></i> Hủy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Chi Tiết Cuộc Bầu Cử & Bỏ Phiếu -->
+    <div id="electionDetailModal" style="display: none ; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; overflow-y: auto; align-items: center; justify-content: center;">
+      <div class="card card-custom" style="max-width: 1000px; width: 95%; margin: 20px auto;">
+        <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px 12px 0 0; padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h5 class="text-white mb-0" id="electionDetailTitle">
+              <i class="bi bi-check-square"></i> Chi Tiết Cuộc Bầu Cử
+            </h5>
+            <button type="button" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;" onclick="App.closeElectionDetailModal()">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <!-- Thông tin cuộc bầu cử -->
+          <div class="mb-4" id="electionDetailInfo"></div>
+
+          <!-- Layout 2 cột -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;">
+            <!-- Cột trái: Danh sách ứng cử viên -->
+            <div>
+              <h6 style="color: #667eea; font-weight: 600; margin-bottom: 15px;">
+                <i class="bi bi-people"></i> Danh Sách Ứng Cử Viên
+              </h6>
+              <div id="electionCandidatesList"></div>
+            </div>
+
+            <!-- Cột phải: Form bỏ phiếu -->
+            <div>
+              <form id="voteForm" onsubmit="App.submitVote(); return false;">
+                <div class="mb-3">
+                  <label class="form-label fw-600"><i class="bi bi-hand-thumbs-up"></i> Chọn Để Bỏ Phiếu</label>
+                  <select class="form-select form-control-custom" id="voteSelect" required>
+                    <option value="">-- Chọn ứng cử viên --</option>
+                  </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom btn-custom w-100">
+                  <i class="bi bi-check-circle"></i> Bỏ Phiếu
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Kết Quả Bầu Cử -->
+    <div id="electionResultsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998; overflow-y: auto; align-items: center; justify-content: center;">
+      <div class="card card-custom" style="max-width: 1100px; width: 95%; margin: 20px auto;">
+        <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px 12px 0 0; padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h5 class="text-white mb-0" id="resultsTitle">
+              <i class="bi bi-bar-chart"></i> Kết Quả Bầu Cử
+            </h5>
+            <button type="button" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;" onclick="App.closeResultsModal()">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <!-- Thông tin cuộc bầu cử -->
+          <div class="mb-4" id="resultsInfo"></div>
+
+          <!-- Thông tin chiến thắng -->
+          <div class="mb-4" id="winnerInfo"></div>
+
+          <!-- Bảng kết quả chi tiết -->
+          <div class="mb-3">
+            <h6 style="color: #667eea; font-weight: 600; margin-bottom: 15px;">
+              <i class="bi bi-table"></i> Chi Tiết Kết Quả
+            </h6>
+            <div style="overflow-x: auto;">
+              <div id="resultsTable"></div>
+            </div>
+          </div>
+
+          <!-- Nút đóng -->
+          <button type="button" class="btn btn-secondary btn-custom w-100" onclick="App.closeResultsModal()">
+            <i class="bi bi-x-circle"></i> Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid py-5">
+      <h1 class="text-center header-title">
+        <i class="bi bi-hand-thumbs-up"></i> ỨNG DỤNG BẦU CỬ BLOCKCHAIN
+      </h1>
+
+      <div id="loader" class="loader">
+        <div class="spinner"></div>
+      </div>
+
+      <div id="content" style="display: block !important; visibility: visible !important; pointer-events: auto !important;">
+        <!-- Nút hành động admin -->
+        <div class="row justify-content-center mb-4">
+          <div class="col-lg-10">
+            <button class="btn btn-primary-custom btn-custom" onclick="App.showCreateElectionModal()">
+              <i class="bi bi-plus-circle"></i> Tạo Cuộc Bầu Cử Mới
+            </button>
+          </div>
+        </div>
+
+        <!-- Tìm kiếm cuộc bầu cử -->
+        <div class="row justify-content-center mb-4">
+          <div class="col-lg-10">
+            <div class="input-group" style="box-shadow: 0 4px 6px rgba(102, 126, 234, 0.1); border-radius: 8px; overflow: hidden;">
+              <span class="input-group-text" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white;">
+                <i class="bi bi-search"></i>
+              </span>
+              <input type="text" class="form-control form-control-custom" id="searchElections" placeholder="Tìm kiếm cuộc bầu cử..." onkeyup="App.searchElections()" style="border: none; font-size: 0.95rem;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Nút lọc theo trạng thái -->
+        <div class="row justify-content-center mb-4">
+          <div class="col-lg-10">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button 
+                id="filterAll" 
+                class="btn filter-btn filter-btn-active" 
+                onclick="App.filterElectionsByStatus('all')"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; font-weight: 600;">
+                <i class="bi bi-list"></i> Tất Cả
+              </button>
+              <button 
+                id="filterActive" 
+                class="btn filter-btn" 
+                onclick="App.filterElectionsByStatus('active')"
+                style="background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); color: white; border: none; font-weight: 600;">
+                <i class="bi bi-play-circle"></i> Đang Diễn Ra
+              </button>
+              <button 
+                id="filterEnded" 
+                class="btn filter-btn" 
+                onclick="App.filterElectionsByStatus('ended')"
+                style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; border: none; font-weight: 600;">
+                <i class="bi bi-stop-circle"></i> Đã Kết Thúc
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danh sách cuộc bầu cử -->
+        <div class="row justify-content-center mb-4">
+          <div class="col-lg-10">
+            <div id="electionsList"></div>
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <!-- Thông tin tài khoản -->
+            <div class="account-info text-center">
+              <p class="mb-2"><i class="bi bi-wallet2"></i> <strong>Tài khoản:</strong></p>
+              <p id="accountAddress" style="font-family: monospace; word-break: break-all;"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Web3 và Truffle Contract -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@truffle/contract@4.3.5/dist/truffle-contract.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
