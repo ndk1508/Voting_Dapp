@@ -260,6 +260,89 @@
           transform: translateY(0);
         }
       }
+
+      /* ========== CSS CHO CUSTOM ALERT MODAL ========== */
+      #customAlertModal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      #customAlertModal.show {
+        display: flex;
+      }
+
+      .alert-modal-content {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease-out;
+        text-align: center;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .alert-modal-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .alert-modal-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .alert-modal-message {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 25px;
+        line-height: 1.5;
+      }
+
+      .alert-modal-ok-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .alert-modal-ok-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .alert-modal-ok-btn:active {
+        transform: translateY(0);
+      }
     </style>
   </head>
   <body>
@@ -299,6 +382,16 @@
           </button>
           <p class="text-muted small mt-3">Chưa có Metamask? <a href="https://metamask.io" target="_blank" style="color: #667eea;">Tải tại đây</a></p>
         </div>
+      </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="customAlertModal">
+      <div class="alert-modal-content">
+        <span class="alert-modal-icon" id="customAlertIcon">ℹ️</span>
+        <div class="alert-modal-title" id="customAlertTitle">Thông Báo</div>
+        <div class="alert-modal-message" id="customAlertMessage">Đây là một thông báo</div>
+        <button class="alert-modal-ok-btn" onclick="App.closeAlert()">OK</button>
       </div>
     </div>
 

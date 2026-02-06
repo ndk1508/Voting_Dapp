@@ -8,6 +8,34 @@ App = {
   candidateFieldCount: 0,
   currentFilter: 'all', // Bộ lọc hiện tại: 'all', 'active', 'ended'
 
+  // ========== HÀM HIỂN THỊ THÔNG BÁO TÙY CHỈNH ==========
+  showAlert: function(message, title = 'Thông Báo', icon = 'ℹ️') {
+    const modal = document.getElementById('customAlertModal');
+    const messageEl = document.getElementById('customAlertMessage');
+    const titleEl = document.getElementById('customAlertTitle');
+    const iconEl = document.getElementById('customAlertIcon');
+    
+    if (modal && messageEl && titleEl && iconEl) {
+      messageEl.textContent = message;
+      titleEl.textContent = title;
+      iconEl.textContent = icon;
+      modal.classList.add('show');
+      
+      // Focus nút OK để có thể nhấn Enter
+      setTimeout(() => {
+        const btn = modal.querySelector('.alert-modal-ok-btn');
+        if (btn) btn.focus();
+      }, 100);
+    }
+  },
+
+  closeAlert: function() {
+    const modal = document.getElementById('customAlertModal');
+    if (modal) {
+      modal.classList.remove('show');
+    }
+  },
+
   init: function() {
     console.log("1. Bắt đầu khởi tạo App...");
     
@@ -128,17 +156,17 @@ App = {
 
     // Validation
     if (!electionName.trim()) {
-      alert('⚠️ Vui lòng nhập tên cuộc bầu cử!');
+      App.showAlert('Vui lòng nhập tên cuộc bầu cử!', '⚠️ Lỗi', '⚠️');
       return;
     }
 
     if (candidates.length < 2) {
-      alert('⚠️ Phải có ít nhất 2 ứng cử viên!');
+      App.showAlert('Phải có ít nhất 2 ứng cử viên!', '⚠️ Lỗi', '⚠️');
       return;
     }
 
     if (new Date(startDate) >= new Date(endDate)) {
-      alert('⚠️ Ngày kết thúc phải sau ngày bắt đầu!');
+      App.showAlert('Ngày kết thúc phải sau ngày bắt đầu!', '⚠️ Lỗi', '⚠️');
       return;
     }
 
@@ -161,7 +189,7 @@ App = {
     App.elections[electionId] = election;
     localStorage.setItem('voting_elections', JSON.stringify(App.elections));
     
-    alert(`✅ Tạo cuộc bầu cử "${electionName}" thành công!`);
+    App.showAlert(`Tạo cuộc bầu cử "${electionName}" thành công!`, '✅ Thành Công', '✅');
     
     // Đóng modal và cập nhật giao diện
     App.closeCreateElectionModal();
@@ -496,12 +524,12 @@ submitVote: async function () {
   const candidateId = document.getElementById('voteSelect').value;
 
   if (!candidateId) {
-    alert('⚠️ Vui lòng chọn ứng cử viên!');
+    App.showAlert('Vui lòng chọn ứng cử viên!', '⚠️ Lỗi', '⚠️');
     return false;
   }
 
   if (!App.account) {
-    alert('⚠️ Vui lòng kết nối ví Metamask!');
+    App.showAlert('Vui lòng kết nối ví Metamask!', '⚠️ Lỗi', '⚠️');
     return false;
   }
 
@@ -553,7 +581,7 @@ submitVote: async function () {
       JSON.stringify(App.userVotes)
     );
 
-    alert('✅ Bỏ phiếu thành công trên Blockchain!');
+    App.showAlert('Bỏ phiếu thành công trên Blockchain!', '✅ Thành Công', '✅');
 
     App.displayElections();
     App.closeElectionDetailModal();
@@ -568,14 +596,14 @@ submitVote: async function () {
   
     connectWallet: function() {
     if (!window.ethereum) {
-      alert('❌ Metamask không được tìm thấy! Vui lòng cài đặt Metamask');
+      App.showAlert('Metamask không được tìm thấy! Vui lòng cài đặt Metamask', '❌ Lỗi', '❌');
       return;
     }
 
     window.ethereum.request({ method: 'eth_requestAccounts' })
     .then(function(accounts) {
       if (accounts.length === 0) {
-        alert('⚠️ Vui lòng chọn một tài khoản trong Metamask');
+        App.showAlert('Vui lòng chọn một tài khoản trong Metamask', '⚠️ Lỗi', '⚠️');
         return;
       }
       
@@ -599,7 +627,7 @@ submitVote: async function () {
               App.account = newAccount;
               sessionStorage.setItem('voting_account', newAccount);
               App.displayAccount(newAccount);
-              alert('⚠️ Tài khoản MetaMask đã thay đổi thành: ' + newAccount);
+              App.showAlert('Tài khoản MetaMask đã thay đổi thành: ' + newAccount, '⚠️ Thông Báo', '⚠️');
               App.displayElections();
             }
           } else {
@@ -618,14 +646,14 @@ submitVote: async function () {
         console.log('❌ Người dùng từ chối kết nối Metamask');
       } else {
         console.error('❌ Lỗi kết nối Metamask:', error);
-        alert('❌ Lỗi kết nối Metamask: ' + error.message);
+        App.showAlert('Lỗi kết nối Metamask: ' + error.message, '❌ Lỗi', '❌');
       }
     });
   },
 
   switchWallet: function() {
     if (!window.ethereum) {
-      alert('❌ MetaMask không được tìm thấy!');
+      App.showAlert('MetaMask không được tìm thấy!', '❌ Lỗi', '❌');
       return;
     }
     
@@ -693,7 +721,7 @@ submitVote: async function () {
       return App.render();
     }).fail(function() {
         console.error("❌ LỖI: Không tìm thấy file Election.json!");
-        alert('❌ Lỗi: Không tìm thấy file Election.json!');
+        App.showAlert('Lỗi: Không tìm thấy file Election.json!', '❌ Lỗi', '❌');
     });
   },
 
@@ -732,7 +760,7 @@ submitVote: async function () {
     const election = App.elections[electionId];
     
     if (!election) {
-      alert('❌ Không tìm thấy cuộc bầu cử!');
+      App.showAlert('Không tìm thấy cuộc bầu cử!', '❌ Lỗi', '❌');
       return;
     }
 
@@ -850,7 +878,7 @@ submitVote: async function () {
 
     } catch (error) {
       console.error('❌ Lỗi khi xem kết quả:', error);
-      alert('❌ Lỗi: ' + error.message);
+      App.showAlert('Lỗi: ' + error.message, '❌ Lỗi', '❌');
     }
   },
 
